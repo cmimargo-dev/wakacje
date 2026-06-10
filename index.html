@@ -3,66 +3,210 @@
 <head>
 <meta charset="UTF-8">
 <title>SP45 Monitor</title>
+<style>
+  html, body {
+    background-color: #0a2c73;
+    color: #FFFFFF;
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  /* Główny kontener dopasowany do szerokości bocznego paska SmartCMS */
+  .panel-box {
+    background-color: #0d2115;
+    border: 5px solid #224430;
+    padding: 6px;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Tabela pomocnicza nagłówka */
+  .header-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2px;
+  }
+
+  /* Klasy stylów CSS zastępujące przestarzałe znacznik <font> */
+  .txt-muted { color: #6B8574; font-size: 14px; font-weight: bold; }
+  .txt-label { color: #B2C7B9; font-size: 18px; font-weight: bold; }
+  .txt-label-large { color: #B2C7B9; font-size: 22px; font-weight: bold; }
+  .txt-white-title { color: #FFFFFF; font-size: 20px; font-weight: bold; }
+  
+  /* Gigantyczne, widoczne z daleka napisy */
+  .txt-clock { color: #FFFFFF; font-family: monospace; font-size: 42px; font-weight: bold; letter-spacing: -1px; white-space: nowrap; }
+  .txt-weather { color: #4AF275; font-size: 32px; font-weight: bold; white-space: nowrap; margin: 2px 0; }
+  .txt-status-active { color: #4AF275; font-size: 28px; font-weight: bold; margin: 2px 0; }
+  .txt-countdown { color: #FFFFFF; font-size: 26px; font-weight: bold; margin: 2px 0; }
+  .txt-vacation-countdown { color: #4AF275; font-family: monospace; font-size: 32px; font-weight: bold; }
+
+  hr {
+    border: 0;
+    height: 3px;
+    background-color: #224430;
+    margin: 5px 0;
+  }
+
+  .center {
+    text-align: center;
+  }
+</style>
 </head>
-<body bgcolor="#0a2c73" text="#FFFFFF" style="margin: 10px; font-family: sans-serif;">
+<body>
 
-<table border="0" cellpadding="12" cellspacing="0" width="1400">
-  <tr>
-    
-    <td width="520" valign="top" bgcolor="#0d2115" style="border: 6px solid #224430;">
-      <font size="5" color="#86A690"><b>POGODA AKTUALNA</b></font><br>
-      <font size="6" color="#FFFFFF"><b>Kraków Prądnik Cz.</b></font><br>
-      <font size="5" color="#6B8574"><b>ul. Meissnera 20</b></font><br><br>
-      <font size="7" color="#4AF275"><b>🌧️ Deszcz</b></font>
-      <br><br>
-      <hr color="#224430" size="4">
-      <br>
-      <font size="6" color="#B2C7B9">Temperatura: <font color="#FFFFFF"><b>14°C</b></font></font><br><br>
-      <font size="6" color="#B2C7B9">Ciśnienie: <font color="#7FE5FF"><b>989 hPa</b></font></font><br><br>
-      <font size="6" color="#B2C7B9">Wilgotność: <font color="#7FE5FF"><b>93%</b></font></font>
-    </td>
+<div class="panel-box">
+  
+  <table class="header-table">
+    <tr>
+      <td align="left" valign="middle">
+        <div id="komorka-data" class="txt-label-large">Środa</div>
+      </td>
+      <td align="right" valign="middle">
+        <div id="komorka-zegar" class="txt-clock">00:00:00</div>
+      </td>
+    </tr>
+  </table>
 
-    <td width="40">&nbsp;</td>
+  <hr>
 
-    <td width="840" valign="top" bgcolor="#0d2115" style="border: 6px solid #224430;">
-      
-      <table border="0" width="100%">
-        <tr>
-          <td id="komorka-data" align="left" valign="middle">
-            <font size="6" color="#B2C7B9"><b>Środa</b></font>
-          </td>
-          <td id="komorka-zegar" align="right" valign="middle">
-            <font color="#FFFFFF" face="monospace"><b style="font-size: 55pt;">21:45:00</b></font>
-          </td>
-        </tr>
-      </table>
-      <hr color="#224430" size="4">
+  <div>
+    <div class="txt-muted">POGODA AKTUALNA</div>
+    <div class="txt-white-title">Kraków Prądnik Cz.</div>
+    <div class="txt-weather">🌧️ Deszcz</div>
+    <div class="txt-label">Temp: <span style="color: #FFFFFF;">14°C</span></div>
+    <div class="txt-label">Ciśnienie: <span style="color: #7FE5FF;">989 hPa</span></div>
+    <div class="txt-label">Wilgotność: <span style="color: #7FE5FF;">93%</span></div>
+  </div>
 
-      <br>
-      <center>
-        <font size="5" color="#86A690"><b>STATUS</b></font><br><br>
-        <div id="komorka-status"><font size="7" color="#4AF275"><b>Więcej lekcji brak</b></font></div><br>
-        <div id="komorka-licznik"><font size="6" color="#FFFFFF"><b>--:--</b></font></div><br>
-        <div id="komorka-info"><font size="5" color="#B2C7B9"><b>Wszystkie zajęcia zakończone</b></font></div>
-      </center>
-      <br>
+  <hr>
 
-      <hr color="#224430" size="4">
-      <br>
-      <center>
-        <div id="komorka-wakacje">
-          <font size="6" color="#B2C7B9">Do wakacji zostało: <font color="#4AF275" face="monospace" size="7"><b>16 dni</b></font></font>
-        </div>
-      </center>
+  <div class="center">
+    <div class="txt-muted">STATUS</div>
+    <div id="komorka-status" class="txt-status-active">Więcej lekcji brak</div>
+    <div id="komorka-licznik" class="txt-countdown">--:--</div>
+    <div id="komorka-info" class="txt-label">Wszystkie zajęcia zakończone</div>
+  </div>
 
-    </td>
+  <hr>
 
-  </tr>
-</table>
+  <div class="center" style="padding-top: 2px;">
+    <div class="txt-label-large">Do wakacji zostało:</div>
+    <div id="komorka-wakacje" class="txt-vacation-countdown">-- dni</div>
+  </div>
+
+</div>
 
 <script type="text/javascript">
-// 1. Plan lekcji w szkole
+// 1. Plan lekcji i przerw w szkole
 var SCHEDULE = [
   { s: 28800, e: 31800, n: '1. lekcja', l: 'Koniec lekcji za:', r: '08:00 - 08:50' },
   { s: 31800, e: 32400, n: 'Przerwa', l: 'Koniec przerwy za:', r: '08:50 - 09:00' },
-  { s: 32400, e: 35100, n: '2. lekcja', l: 'Koniec lekcji za:', r: '09
+  { s: 32400, e: 35100, n: '2. lekcja', l: 'Koniec lekcji za:', r: '09:00 - 09:45' },
+  { s: 35100, e: 35700, n: 'Przerwa', l: 'Koniec przerwy za:', r: '09:45 - 09:55' },
+  { s: 35700, e: 38400, n: '3. lekcja', l: 'Koniec lekcji za:', r: '09:55 - 10:40' },
+  { s: 38400, e: 39300, n: 'Przerwa (duża)', l: 'Koniec przerwy za:', r: '10:40 - 10:55' },
+  { s: 39300, e: 42000, n: '4. lekcja', l: 'Koniec lekcji za:', r: '10:55 - 11:40' },
+  { s: 42000, e: 42600, n: 'Przerwa', l: 'Koniec przerwy za:', r: '11:40 - 11:50' },
+  { s: 42600, e: 45300, n: '5. lekcja', l: 'Koniec lekcji za:', r: '11:50 - 12:35' },
+  { s: 45300, e: 45900, n: 'Przerwa', l: 'Koniec przerwy za:', r: '12:35 - 12:45' },
+  { s: 45900, e: 48600, n: '6. lekcja', l: 'Koniec lekcji za:', r: '12:45 - 13:30' },
+  { s: 48600, e: 49800, n: 'Przerwa (duża)', l: 'Koniec przerwy za:', r: '13:30 - 13:50' },
+  { s: 49800, e: 52500, n: '7. lekcja', l: 'Koniec lekcji za:', r: '13:50 - 14:35' }
+];
+
+function dopiszZero(liczba) {
+  return (liczba < 10 ? "0" : "") + liczba;
+}
+
+// 2. Bezpieczna aktualizacja odliczania do wakacji (zmiana samego tekstu innerText)
+function aktualizujWakacje() {
+  try {
+    var teraz = new Date();
+    var biezacyRok = teraz.getFullYear();
+    var dataWakacji = new Date(biezacyRok, 5, 26, 0, 0, 0); // 26 czerwca
+    
+    if (teraz.getTime() > dataWakacji.getTime()) {
+      dataWakacji = new Date(biezacyRok + 1, 5, 26, 0, 0, 0);
+    }
+    
+    var roznicaCzasu = dataWakacji.getTime() - teraz.getTime();
+    var roznicaDni = Math.ceil(roznicaCzasu / 86400000);
+    
+    var el = document.getElementById('komorka-wakacje');
+    if (el) {
+      if ((teraz.getMonth() == 5 && teraz.getDate() >= 26) || teraz.getMonth() == 6 || teraz.getMonth() == 7) {
+        el.innerText = "Wakacje! 🎉";
+      } else {
+        el.innerText = roznicaDni + " dni";
+      }
+    }
+  } catch(e) {}
+}
+
+// 3. Bezpieczna aktualizacja zegara i statusów lekcji (płynna podmiana tekstu)
+function odswiezZegar() {
+  try {
+    var teraz = new Date();
+    var godzina = teraz.getHours();
+    var minuta = teraz.getMinutes();
+    var sekunda = teraz.getSeconds();
+    var czasTekst = dopiszZero(godzina) + ":" + dopiszZero(minuta) + ":" + dopiszZero(sekunda);
+    
+    // Zegar
+    var elZegar = document.getElementById('komorka-zegar');
+    if (elZegar) elZegar.innerText = czasTekst;
+    
+    // Dzień tygodnia
+    var dni = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+    var elData = document.getElementById('komorka-data');
+    if (elData) elData.innerText = dni[teraz.getDay()];
+    
+    // Odliczanie czasu lekcji i przerw
+    var sekundyTeraz = (godzina * 3600) + (minuta * 60) + sekunda;
+    var znaleziono = false;
+    
+    var elStatus = document.getElementById('komorka-status');
+    var elLicznik = document.getElementById('komorka-licznik');
+    var elInfo = document.getElementById('komorka-info');
+    
+    for (var i = 0; i < SCHEDULE.length; i++) {
+      var lekcja = SCHEDULE[i];
+      if (sekundyTeraz >= lekcja.s && sekundyTeraz < lekcja.e) {
+        var pozostalo = lekcja.e - sekundyTeraz;
+        var m = Math.floor(pozostalo / 60);
+        var s = pozostalo % 60;
+        
+        if (elStatus) elStatus.innerText = lekcja.n;
+        if (elLicznik) elLicznik.innerText = dopiszZero(m) + ":" + dopiszZero(s);
+        if (elInfo) elInfo.innerText = lekcja.l + " (" + lekcja.r + ")";
+        znaleziono = true;
+        break;
+      }
+    }
+    
+    if (!znaleziono) {
+      if (elStatus) elStatus.innerText = "Więcej lekcji brak";
+      if (elLicznik) elLicznik.innerText = "--:--";
+      if (elInfo) elInfo.innerText = "Wszystkie zajęcia zakończone";
+    }
+  } catch(e) {}
+}
+
+// Rozruch skryptu
+try {
+  odswiezZegar();
+  aktualizujWakacje();
+} catch(e){}
+
+// Interwały czasowe działające stabilnie w tle
+setInterval(odswiezZegar, 1000);
+setInterval(aktualizujWakacje, 600000); // Odświeżanie dni co 10 minut
+</script>
+
+</body>
+</html>
