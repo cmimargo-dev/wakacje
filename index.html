@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SP45 Monitor</title>
+</head>
+<body bgcolor="#0a2c73" text="#FFFFFF">
+
+<table border="0" cellpadding="6" cellspacing="0" width="700">
+  <tr>
+    
+    <td width="260" valign="top" bgcolor="#0d2115" style="border: 3px solid #224430;">
+      <font size="4" color="#86A690"><b>POGODA AKTUALNA</b></font><br>
+      <font size="5" color="#FFFFFF"><b>Kraków Prądnik Cz.</b></font><br>
+      <font size="4" color="#6B8574">ul. Meissnera 20</font><br>
+      <font size="6" color="#4AF275"><b><span id="txt-pogoda-stan">☀️ Słonecznie</span></b></font>
+      <br>
+      <hr color="#224430">
+      <font size="5" color="#B2C7B9">Temperatura: <font color="#FFFFFF"><b><span id="txt-pogoda-temp">--</span>°C</b></font></font><br>
+      <font size="5" color="#B2C7B9">Ciśnienie: <font color="#7FE5FF"><b><span id="txt-pogoda-cisnienie">----</span> hPa</b></font></font><br>
+      <font size="5" color="#B2C7B9">Wilgotność: <font color="#7FE5FF"><b><span id="txt-pogoda-wilgotnosc">--</span>%</b></font></font>
+    </td>
+
+    <td width="20">&nbsp;</td>
+
+    <td width="420" valign="top" bgcolor="#0d2115" style="border: 3px solid #224430;">
+      
+      <table border="0" width="100%">
+        <tr>
+          <td align="left" valign="middle">
+            <font size="5" color="#B2C7B9"><b><span id="txt-data">Poniedziałek</span></b></font>
+          </td>
+          <td align="right" valign="middle">
+            <font size="7" face="monospace" color="#FFFFFF"><b><span id="txt-zegar">00:00:00</span></b></font>
+          </td>
+        </tr>
+      </table>
+      <hr color="#224430">
+
+      <center>
+        <font size="4" color="#86A690"><b>STATUS</b></font><br>
+        <font size="6" color="#4AF275"><b><span id="txt-status">Aktualizacja...</span></b></font><br>
+        <font size="4" color="#FFFFFF"><b><span id="txt-licznik">--:--</span></b></font><br>
+        <font size="4" color="#B2C7B9"><span id="txt-info">Pobieranie planu zajęć</span></font>
+      </center>
+      <br>
+
+      <hr color="#224430">
+      <center>
+        <font size="5" color="#B2C7B9">Do wakacji zostało: <font color="#4AF275" face="monospace" size="6"><b><span id="txt-wakacje">-- dni</span></b></font></font>
+      </center>
+
+    </td>
+
+  </tr>
+</table>
+
+<script type="text/javascript">
+// 1. Plan lekcji
+var SCHEDULE = [
+  { s: 28800, e: 31800, n: '1. lekcja', l: 'Koniec lekcji za:', r: '08:00 - 08:50' },
+  { s: 31800, e: 32400, n: 'Przerwa', l: 'Koniec przerwy za:', r: '08:50 - 09:00' },
+  { s: 32400, e: 35100, n: '2. lekcja', l: 'Koniec lekcji za:', r: '09:00 - 09:45' },
+  { s: 35100, e: 35700, n: 'Przerwa', l: 'Koniec przerwy za:', r: '09:45 - 09:55' },
+  { s: 35700, e: 38400, n: '3. lekcja', l: 'Koniec lekcji za:', r: '09:55 - 10:40' },
+  { s: 38400, e: 39300, n: 'Przerwa (duża)', l: 'Koniec przerwy za:', r: '10:40 - 10:55' },
+  { s: 39300, e: 42000, n: '4. lekcja', l: 'Koniec lekcji za:', r: '10:55 - 11:40' },
+  { s: 42000, e: 42600, n: 'Przerwa', l: 'Koniec przerwy za:', r: '11:40 - 11:50' },
+  { s: 42600, e: 45300, n: '5. lekcja', l: 'Koniec lekcji za:', r: '11:50 - 12:35' },
+  { s: 45300, e: 45900, n: 'Przerwa', l: 'Koniec przerwy za:', r: '12:35 - 12:45' },
+  { s: 45900, e: 48600, n: '6. lekcja', l: 'Koniec lekcji za:', r: '12:45 - 13:30' },
+  { s: 48600, e: 49800, n: 'Przerwa (duża)', l: 'Koniec przerwy za:', r: '13:30 - 13:50' },
+  { s: 49800, e: 52500, n: '7. lekcja', l: 'Koniec lekcji za:', r: '13:50 - 14:35' }
+];
+
+// 2. Dynamiczne pobieranie danych pogodowych (Open-Meteo)
+function aktualizujPogode() {
+  const lat = 50.076;
+  const lon = 19.976;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,surface_pressure,weather_code`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      const current = data.current;
+      
+      document.getElementById('txt-pogoda-temp').innerText = Math.round(current.temperature_2m);
+      document.getElementById('txt-pogoda-wilgotnosc').innerText = current.relative_humidity_2m;
+      document.getElementById('txt-pogoda-cisnienie').innerText = Math.round(current.surface_pressure);
+
+      const code = current.weather_code;
+      let stanTekst = "☀️ Słonecznie";
+
+      if (code === 0) {
+        stanTekst = "☀️ Słonecznie";
+      } else if (code === 1 || code === 2) {
+        stanTekst = "⛅ Zachmurzenie";
+      } else if (code === 3) {
+        stanTekst = "☁️ Pochmurno";
+      } else if (code >= 45 && code <= 48) {
+        stanTekst = "🌫️ Mgła";
+      } else if (code >= 51 && code <= 67) {
+        stanTekst = "🌧️ Deszcz";
+      } else if (code >= 71 && code <= 77) {
+        stanTekst = "❄️ Śnieg";
+      } else if (code >= 80 && code <= 82) {
+        stanTekst = "🌦️ Przelotny deszcz";
+      } else if (code >= 95) {
+        stanTekst = "⛈️ Burza";
+      }
+
+      document.getElementById('txt-pogoda-stan').innerText = stanTekst;
+    })
+    .catch(error => console.error("Błąd pogodowy:", error));
+}
+
+// 3. Automatyczne odliczanie do najbliższych wakacji
+function aktualizujOdliczanieDoWakacji() {
+  const teraz = new Date();
+  const biezacyRok = teraz.getFullYear();
+  
+  // Przyjmujemy standardowy szacowany koniec roku szkolnego (np. 26 czerwca)
+  let dataWakacji = new Date(biezacyRok, 5, 26); // Miesiące w JS są od 0 (5 = czerwiec)
+  
+  // Jeśli w danym roku wakacje już trwają lub minęły, ustawiamy odliczanie na kolejny rok
+  if (teraz > dataWakacji) {
+    dataWakacji = new Date(biezacyRok + 1, 5, 26);
+  }
+  
+  // Obliczanie różnicy w dniach
+  const roznicaCzasu = dataWakacji.getTime() - teraz.getTime();
+  const roznicaDni = Math.ceil(roznicaCzasu / (1000 * 60 * 60 * 24));
+  
+  // Wyświetlanie wyniku lub komunikatu o wakacjach
+  if (teraz.getMonth() == 5 && teraz.getDate() >= 26 || teraz.getMonth() == 6 || teraz.getMonth() == 7) {
+    document.getElementById('txt-wakacje').innerText = "Trwają wakacje! 🎉";
+  } else {
+    document.getElementById('txt-wakacje').innerText = roznicaDni + " dni";
+  }
+}
+
+// 4. Obsługa zegara i daty
+function odswiezZegar() {
+  const teraz = new Date();
+  
+  const czasStr = teraz.toTimeString().split(' ')[0];
+  document.getElementById('txt-zegar').innerText = czasStr;
+  
+  const dni = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+  document.getElementById('txt-data').innerText = dni[teraz.getDay()];
+  
+  if(document.getElementById('txt-status').innerText === "Aktualizacja...") {
+    document.getElementById('txt-status').innerText = "Więcej lekcji brak";
+    document.getElementById('txt-info').innerText = "Wszystkie zajęcia zakończone";
+  }
+}
+
+// Start wszystkich funkcji
+aktualizujPogode();
+aktualizujOdliczanieDoWakacji();
+odswiezZegar();
+
+// Interwały odświeżania danych
+setInterval(odswiezZegar, 1000);                // Co sekundę
+setInterval(aktualizujOdliczanieDoWakacji, 3600000); // Co godzinę rekonfiguracja dni
+setInterval(aktualizujPogode, 900000);          // Co 15 minut pobieranie pogody
+</script>
+
+</body>
+</html>
