@@ -4,111 +4,136 @@
 <meta charset="UTF-8">
 <title>SP45 Monitor</title>
 <style>
-  body {
+  html, body {
     background-color: #0a2c73;
     color: #FFFFFF;
     font-family: sans-serif;
-    margin: 20px;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
   }
-  /* Skalowanie tabeli głównej x2 (700px * 2 = 1400px) */
-  .main-table {
-    width: 1400px;
-    border-spacing: 0;
-    border-collapse: collapse;
-  }
-  /* Skalowanie komórek x2 i dopasowanie paddingu */
-  .panel-pogoda {
-    width: 520px; /* 260px * 2 */
-    vertical-align: top;
-    background-color: #0d2115;
-    border: 6px solid #224430; /* 3px * 2 */
-    padding: 12px; /* 6px * 2 */
-  }
-  .spacer {
-    width: 40px; /* 20px * 2 */
-  }
-  .panel-status {
-    width: 840px; /* 420px * 2 */
-    vertical-align: top;
-    background-color: #0d2115;
-    border: 6px solid #224430; /* 3px * 2 */
-    padding: 12px; /* 6px * 2 */
-  }
-  /* Podwojone rozmiary czcionek */
-  .f-size-4 { font-size: 24pt; } 
-  .f-size-5 { font-size: 28pt; } 
-  .f-size-6 { font-size: 48pt; } 
-  .f-size-7 { font-size: 72pt; } 
   
-  /* Kolory i style pomocnicze */
+  .monitor-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 1vh;
+  }
+
+  /* Proporcje dopasowane tak, aby napisy miały dużo miejsca w poziomie */
+  .panel-pogoda {
+    width: 38%;
+    height: 100%;
+    background-color: #0d2115;
+    border: 4px solid #224430;
+    box-sizing: border-box;
+    padding: 2vh 2vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .spacer {
+    width: 2%;
+  }
+
+  .panel-status {
+    width: 60%;
+    height: 100%;
+    background-color: #0d2115;
+    border: 4px solid #224430;
+    box-sizing: border-box;
+    padding: 2vh 2vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* MAKSYMALNIE POWIĘKSZONE CZCIONKI (Dopasowane do szerokiego i niskiego okna w CMS) */
+  .f-size-4 { font-size: 4.5vh; line-height: 1.1; } /* Nagłówki: POGODA AKTUALNA, STATUS */
+  .f-size-5 { font-size: 5.2vh; line-height: 1.2; } /* Nazwa miejscowości, parametry temperatury, Do wakacji zostało... */
+  .f-size-6 { font-size: 7.5vh; line-height: 1.1; } /* Słonecznie / Deszcz, Status lekcji, Dni do wakacji */
+  .f-size-7 { font-size: 11vh; font-family: monospace; line-height: 1; } /* Olbrzymi zegar cyfrowy */
+  
+  /* Kolory i style */
   .c-green-label { color: #86A690; font-weight: bold; }
   .c-white { color: #FFFFFF; font-weight: bold; }
-  .c-muted { color: #6B8574; }
+  .c-muted { color: #6B8574; font-size: 3.5vh; font-weight: bold; }
   .c-bright-green { color: #4AF275; font-weight: bold; }
-  .c-label-light { color: #B2C7B9; }
+  .c-label-light { color: #B2C7B9; font-weight: bold; }
   .c-cyan { color: #7FE5FF; font-weight: bold; }
   
-  .clock-face { font-family: monospace; color: #FFFFFF; font-weight: bold; }
-  .countdown-face { font-family: monospace; color: #4AF275; font-weight: bold; }
+  hr { border: 0; height: 4px; background-color: #224430; margin: 1vh 0; }
   
-  hr { border: 0; height: 4px; background-color: #224430; margin: 20px 0; }
+  .row-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .center-flex {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    margin: 0.5vh 0;
+  }
 </style>
 </head>
 <body>
 
-<table class="main-table" border="0">
-  <tr>
+<div class="monitor-container">
     
-    <td class="panel-pogoda">
-      <div class="f-size-4 c-green-label">POGODA AKTUALNA</div>
-      <div class="f-size-5 c-white">Kraków Prądnik Cz.</div>
-      <div class="f-size-4 c-muted">ul. Meissnera 20</div>
-      <div class="f-size-6 c-bright-green" style="margin-top: 10px;"><span id="txt-pogoda-stan">☀️ Słonecznie</span></div>
+    <div class="panel-pogoda">
+      <div>
+        <div class="f-size-4 c-green-label">POGODA AKTUALNA</div>
+        <div class="f-size-5 c-white">Kraków Prądnik Cz.</div>
+        <div class="f-size-4 c-muted">ul. Meissnera 20</div>
+      </div>
+      <div class="f-size-6 c-bright-green"><span id="txt-pogoda-stan">☀️ Słonecznie</span></div>
       
       <hr>
       
-      <div class="f-size-5 c-label-light">Temperatura: <span class="c-white"><span id="txt-pogoda-temp">--</span>°C</span></div>
-      <div class="f-size-5 c-label-light" style="margin-top: 10px;">Ciśnienie: <span class="c-cyan"><span id="txt-pogoda-cisnienie">----</span> hPa</span></div>
-      <div class="f-size-5 c-label-light" style="margin-top: 10px;">Wilgotność: <span class="c-cyan"><span id="txt-pogoda-wilgotnosc">--</span>%</span></div>
-    </td>
+      <div>
+        <div class="f-size-5 c-label-light">Temperatura: <span class="c-white"><span id="txt-pogoda-temp">21</span>°C</span></div>
+        <div class="f-size-5 c-label-light" style="margin-top: 0.5vh;">Ciśnienie: <span class="c-cyan"><span id="txt-pogoda-cisnienie">1015</span> hPa</span></div>
+        <div class="f-size-5 c-label-light" style="margin-top: 0.5vh;">Wilgotność: <span class="c-cyan"><span id="txt-pogoda-wilgotnosc">55</span>%</span></div>
+      </div>
+    </div>
 
-    <td class="spacer">&nbsp;</td>
+    <div class="spacer"></div>
 
-    <td class="panel-status">
+    <div class="panel-status">
       
-      <table border="0" width="100%">
-        <tr>
-          <td align="left" valign="middle">
-            <div class="f-size-5 c-label-light"><b><span id="txt-data">Poniedziałek</span></b></div>
-          </td>
-          <td align="right" valign="middle">
-            <div class="f-size-7 clock-face"><span id="txt-zegar">00:00:00</span></div>
-          </td>
-        </tr>
-      </table>
+      <div class="row-flex">
+        <div class="f-size-5 c-label-light"><span id="txt-data">Środa</span></div>
+        <div class="f-size-7 c-white"><span id="txt-zegar">00:00:00</span></div>
+      </div>
       
       <hr>
 
-      <center>
+      <div class="center-flex">
         <div class="f-size-4 c-green-label">STATUS</div>
-        <div class="f-size-6 c-bright-green" style="margin: 10px 0;"><span id="txt-status">Aktualizacja...</span></div>
-        <div class="f-size-4 c-white" style="margin-bottom: 10px;"><span id="txt-licznik">--:--</span></div>
-        <div class="f-size-4 c-label-light"><span id="txt-info">Pobieranie planu zajęć</span></div>
-      </center>
+        <div class="f-size-6 c-bright-green"><span id="txt-status">Więcej lekcji brak</span></div>
+        <div class="f-size-5 c-white" style="margin-top: 0.4vh; letter-spacing: 1px;"><b><span id="txt-licznik">--:--</span></b></div>
+        <div class="f-size-4 c-label-light" style="margin-top: 0.2vh;"><span id="txt-info">Wszystkie zajęcia zakończone</span></div>
+      </div>
 
       <hr>
       
-      <center style="padding: 10px 0;">
-        <div class="f-size-5 c-label-light">Do wakacji zostało: <span class="f-size-6 countdown-face"><span id="txt-wakacje">-- dni</span></span></div>
-      </center>
+      <div style="text-align: center; padding-bottom: 0.5vh;">
+        <div class="f-size-5 c-label-light">Do wakacji zostało: <span class="c-bright-green f-size-6" style="font-family: monospace; padding-left: 10px;"><span id="txt-wakacje">-- dni</span></span></div>
+      </div>
 
-    </td>
+    </div>
 
-  </tr>
-</table>
+</div>
 
 <script type="text/javascript">
-// 1. Plan lekcji
 var SCHEDULE = [
   { s: 28800, e: 31800, n: '1. lekcja', l: 'Koniec lekcji za:', r: '08:00 - 08:50' },
   { s: 31800, e: 32400, n: 'Przerwa', l: 'Koniec przerwy za:', r: '08:50 - 09:00' },
@@ -125,90 +150,97 @@ var SCHEDULE = [
   { s: 49800, e: 52500, n: '7. lekcja', l: 'Koniec lekcji za:', r: '13:50 - 14:35' }
 ];
 
-// 2. Dynamiczne pobieranie danych pogodowych (Open-Meteo)
 function aktualizujPogode() {
-  const lat = 50.076;
-  const lon = 19.976;
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,surface_pressure,weather_code`;
+  try {
+    var url = "https://" + "api.open-meteo.com" + "/v1/forecast?latitude=50.076&longitude=19.976&current=temperature_2m,relative_humidity_2m,surface_pressure,weather_code";
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      const current = data.current;
-      
-      document.getElementById('txt-pogoda-temp').innerText = Math.round(current.temperature_2m);
-      document.getElementById('txt-pogoda-wilgotnosc').innerText = current.relative_humidity_2m;
-      document.getElementById('txt-pogoda-cisnienie').innerText = Math.round(current.surface_pressure);
+    fetch(url)
+      .then(function(response) { return response.json(); })
+      .then(function(data) {
+        if (!data || !data.current) return;
+        var current = data.current;
+        
+        document.getElementById('txt-pogoda-temp').innerText = Math.round(current.temperature_2m);
+        document.getElementById('txt-pogoda-wilgotnosc').innerText = current.relative_humidity_2m;
+        document.getElementById('txt-pogoda-cisnienie').innerText = Math.round(current.surface_pressure);
 
-      const code = current.weather_code;
-      let stanTekst = "☀️ Słonecznie";
+        var code = current.weather_code;
+        var stanTekst = "☀️ Słonecznie";
 
-      if (code === 0) {
-        stanTekst = "☀️ Słonecznie";
-      } else if (code === 1 || code === 2) {
-        stanTekst = "⛅ Zachmurzenie";
-      } else if (code === 3) {
-        stanTekst = "☁️ Pochmurno";
-      } else if (code >= 45 && code <= 48) {
-        stanTekst = "🌫️ Mgła";
-      } else if (code >= 51 && code <= 67) {
-        stanTekst = "🌧️ Deszcz";
-      } else if (code >= 71 && code <= 77) {
-        stanTekst = "❄️ Śnieg";
-      } else if (code >= 80 && code <= 82) {
-        stanTekst = "🌦️ Przelotny deszcz";
-      } else if (code >= 95) {
-        stanTekst = "⛈️ Burza";
-      }
+        if (code === 0) stanTekst = "☀️ Słonecznie";
+        else if (code === 1 || code === 2) stanTekst = "⛅ Zachmurzenie";
+        else if (code === 3) stanTekst = "☁️ Pochmurno";
+        else if (code >= 45 && code <= 48) stanTekst = "🌫️ Mgła";
+        else if (code >= 51 && code <= 67) stanTekst = "🌧️ Deszcz";
+        else if (code >= 71 && code <= 77) stanTekst = "❄️ Śnieg";
+        else if (code >= 80 && code <= 82) stanTekst = "🌦️ Przelotny deszcz";
+        else if (code >= 95) stanTekst = "⛈️ Burza";
 
-      document.getElementById('txt-pogoda-stan').innerText = stanTekst;
-    })
-    .catch(error => console.error("Błąd pogodowy:", error));
+        document.getElementById('txt-pogoda-stan').innerText = stanTekst;
+      })
+      .catch(function(err) { 
+        console.log("Meteo block:", err);
+      });
+  } catch(e) {}
 }
 
-// 3. Automatyczne odliczanie do najbliższych wakacji
 function aktualizujOdliczanieDoWakacji() {
-  const teraz = new Date();
-  const biezacyRok = teraz.getFullYear();
-  
-  let dataWakacji = new Date(biezacyRok, 5, 26);
+  var teraz = new Date();
+  var biezacyRok = teraz.getFullYear();
+  var dataWakacji = new Date(biezacyRok, 5, 26);
   
   if (teraz > dataWakacji) {
     dataWakacji = new Date(biezacyRok + 1, 5, 26);
   }
   
-  const roznicaCzasu = dataWakacji.getTime() - teraz.getTime();
-  const roznicaDni = Math.ceil(roznicaCzasu / (1000 * 60 * 60 * 24));
+  var roznicaCzasu = dataWakacji.getTime() - teraz.getTime();
+  var roznicaDni = Math.ceil(roznicaCzasu / (1000 * 60 * 60 * 24));
   
-  if (teraz.getMonth() == 5 && teraz.getDate() >= 26 || teraz.getMonth() == 6 || teraz.getMonth() == 7) {
+  if ((teraz.getMonth() == 5 && teraz.getDate() >= 26) || teraz.getMonth() == 6 || teraz.getMonth() == 7) {
     document.getElementById('txt-wakacje').innerText = "Trwają wakacje! 🎉";
   } else {
     document.getElementById('txt-wakacje').innerText = roznicaDni + " dni";
   }
 }
 
-// 4. Obsługa zegara i daty
 function odswiezZegar() {
-  const teraz = new Date();
+  var teraz = new Date();
   
-  const czasStr = teraz.toTimeString().split(' ')[0];
+  var czasStr = teraz.toTimeString().split(' ')[0];
   document.getElementById('txt-zegar').innerText = czasStr;
   
-  const dni = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
+  var dni = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
   document.getElementById('txt-data').innerText = dni[teraz.getDay()];
   
-  if(document.getElementById('txt-status').innerText === "Aktualizacja...") {
+  var aktualnyCzasSekundy = (teraz.getHours() * 3600) + (teraz.getMinutes() * 60) + teraz.getSeconds();
+  var znaleziono = false;
+  
+  for (var i = 0; i < SCHEDULE.length; i++) {
+    var lekcja = SCHEDULE[i];
+    if (aktualnyCzasSekundy >= lekcja.s && aktualnyCzasSekundy < lekcja.e) {
+      var pozostaloSekund = lekcja.e - aktualnyCzasSekundy;
+      var minuty = Math.floor(pozostaloSekund / 60);
+      var sekundy = pozostaloSekund % 60;
+      
+      document.getElementById('txt-status').innerText = lekcja.n;
+      document.getElementById('txt-licznik').innerText = (minuty < 10 ? "0" : "") + minuty + ":" + (sekundy < 10 ? "0" : "") + sekundy;
+      document.getElementById('txt-info').innerText = lekcja.l + " (" + lekcja.r + ")";
+      znaleziono = true;
+      break;
+    }
+  }
+  
+  if (!znaleziono) {
     document.getElementById('txt-status').innerText = "Więcej lekcji brak";
+    document.getElementById('txt-licznik').innerText = "--:--";
     document.getElementById('txt-info').innerText = "Wszystkie zajęcia zakończone";
   }
 }
 
-// Start wszystkich funkcji
-aktualizujPogode();
-aktualizujOdliczanieDoWakacji();
-odswiezZegar();
+try { odswiezZegar(); } catch(e){}
+try { aktualizujOdliczanieDoWakacji(); } catch(e){}
+try { aktualizujPogode(); } catch(e){}
 
-// Interwały odświeżania danych
 setInterval(odswiezZegar, 1000);
 setInterval(aktualizujOdliczanieDoWakacji, 3600000);
 setInterval(aktualizujPogode, 900000);
